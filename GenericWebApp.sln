@@ -1,26 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericWebApp", "GenericWebApp\GenericWebApp.csproj", "{E027CE43-120B-499E-83AB-3C0D48386503}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericWebApp", "src\GenericWebApp\GenericWebApp.csproj", "{E027CE43-120B-499E-83AB-3C0D48386503}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{B12C7B2E-95A7-4C1B-8A83-ABC74118F742}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.CQRS", "Framework.CQRS\Framework.CQRS.csproj", "{3F30426A-E546-4CA9-9859-AEC09AAF96D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.CQRS", "Framework\Framework.CQRS\Framework.CQRS.csproj", "{3F30426A-E546-4CA9-9859-AEC09AAF96D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{DFBFF3AF-8046-4668-A9A5-5D13F5729956}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{BA33A01A-41DC-4FD7-9492-1AC398895A70}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{BA33A01A-41DC-4FD7-9492-1AC398895A70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.DI.Autofac", "Framework.DI.Autofac\Framework.DI.Autofac.csproj", "{C959BF40-B1A6-4207-80AF-F3EFF7A968AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.DI.Autofac", "Framework\Framework.DI.Autofac\Framework.DI.Autofac.csproj", "{C959BF40-B1A6-4207-80AF-F3EFF7A968AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Common", "Framework.Common\Framework.Common.csproj", "{B0EFF771-427B-4B26-8C2C-4F5B28C1805B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Common", "Framework\Framework.Common\Framework.Common.csproj", "{B0EFF771-427B-4B26-8C2C-4F5B28C1805B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Specification", "Framework.Specification\Framework.Specification.csproj", "{B62F20CC-1813-43D4-9282-CAED99A70840}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Specification", "Framework\Framework.Specification\Framework.Specification.csproj", "{B62F20CC-1813-43D4-9282-CAED99A70840}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{2ABC9801-10D7-49B0-AB56-69A625B15A06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{2ABC9801-10D7-49B0-AB56-69A625B15A06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Database", "Framework.Database\Framework.Database.csproj", "{E1636864-7A7A-4567-910B-D4E2572A09BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Database", "Framework\Framework.Database\Framework.Database.csproj", "{E1636864-7A7A-4567-910B-D4E2572A09BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Database.MongoDB", "Framework.Database.MongoDB\Framework.Database.MongoDB.csproj", "{3704A862-1EF0-45E8-8D9A-4AA56415E007}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Database.MongoDB", "Framework\Framework.Database.MongoDB\Framework.Database.MongoDB.csproj", "{3704A862-1EF0-45E8-8D9A-4AA56415E007}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
