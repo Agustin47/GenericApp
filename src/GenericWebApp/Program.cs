@@ -1,24 +1,28 @@
 using Framework.DI.Autofac;
 using GenericWebApp.Modules;
-
+using GenericWebApp.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwagger();
 
-
+var mongoOptions = new MongoOptions();
+builder.Configuration.GetSection(nameof(MongoOptions)).Bind(mongoOptions);
+    
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
-builder.Host.UseServiceProviderFactory(AutofacServiceProviderFactory.GetInstance);
+var provider = AutofacBuilder
+    .Start()
+    .AddCqrs()
+    .AddMongoDd(mongoOptions)
+    .Build();
+
+builder.Host.UseServiceProviderFactory(provider);
 
 var app = builder.Build();
 

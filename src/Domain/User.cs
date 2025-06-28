@@ -1,14 +1,11 @@
-﻿namespace Domain;
+﻿using Framework.Domain;
 
-public class User
+namespace Domain;
+
+public class User : DomainEntity<UserId>
 {
-    public Guid Id { get; set; }
     public string Name { get; private set; }
-    
-    public User(Guid id)
-    {
-        Id = id;
-    }
+    public User(UserId id) : base(id){}
     
     public void AsingName(string name,
         string userContext, DateTime? actionTime = null)

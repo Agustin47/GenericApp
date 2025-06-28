@@ -16,8 +16,11 @@ public class WeatherCommandHandler : ICommandHandler<WeatherCommand>
     
     public async Task<Result> Handle(WeatherCommand command)
     {
-        User newUser = new(Guid.NewGuid());
+        UserId id = new(Guid.NewGuid());
+        User newUser = new(id);
         newUser.AsingName("Juan", "yo");
+        
+        var json = System.Text.Json.JsonSerializer.Serialize(newUser);
 
         return await _userRepository.CreateAsync(newUser);
     }

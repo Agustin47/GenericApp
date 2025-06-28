@@ -1,17 +1,17 @@
 namespace Framework.Specification;
 
-public class OrSpecification<T> : Specification<T>
+internal class OrSpecification<T> : Specification<T>
 {
-    private readonly Specification<T> _left;
-    private readonly Specification<T> _right;
+    private readonly ISpecification<T> _left;
+    private readonly ISpecification<T> _right;
 
-    private OrSpecification(Specification<T> left, Specification<T> right) : base(null)
+    private OrSpecification(ISpecification<T> left, ISpecification<T> right) : base(null)
     {
         _left = left;
         _right = right;
     }
     
-    public static Specification<T> Create(Specification<T> left, Specification<T> right)
+    public static Specification<T> Create(ISpecification<T> left, ISpecification<T> right)
         => new OrSpecification<T>(left, right);
     
     public override bool IsSatisfiedBy(T value)

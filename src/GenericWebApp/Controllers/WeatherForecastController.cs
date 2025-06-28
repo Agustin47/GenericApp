@@ -28,8 +28,8 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IActionResult> Get()
     {
-        WeatherCommand command = new();
-        await _commandBus.Handle(command);
+        // WeatherCommand command = new();
+        // await _commandBus.Handle(command);
         
         GetUserQuery query = new();
         var result = await _queryBus.Handle<User>(query);

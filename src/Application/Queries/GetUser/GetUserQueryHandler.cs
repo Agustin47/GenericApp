@@ -19,9 +19,14 @@ public class GetUserQueryHandler : IQueryHandler<GetUserQuery, User>
     {
         
         var spec1 = Specification<User>.Create(u => u.Name == "Juan");
-        var users = await _userRepository.GetAsync(u => u.Name == "Juan");
 
-        var user = users.Value.FirstOrDefault();
-        return Result.Success(user);
+        var queryRepo = QueryRepositoryBuilder<User>.Create()
+            .AddSpecs(spec1)
+            .Build();
+        
+        var users = await _userRepository.Filter(queryRepo);
+        var user = await _userRepository.FirstOrDefault(queryRepo);
+        
+        return Result.Success(new User(null));
     }
 }
