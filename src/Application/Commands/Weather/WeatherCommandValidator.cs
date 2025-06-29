@@ -1,18 +1,11 @@
-using Framework.CQRS.Commands;
+using Framework.CQRS.Implementation;
 
 namespace Application.Commands.Weather;
 
-public class WeatherCommandValidator : ICommandValidator<WeatherCommand>
+public class WeatherCommandValidator : CommandBaseValidator<WeatherCommand>
 {
     public WeatherCommandValidator()
     {
-        // fluent validator
-        //RuleFor
-    }
-    
-
-    public bool Validate(WeatherCommand command)
-    {
-        throw new NotImplementedException();
+        
     }
 }

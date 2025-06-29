@@ -1,4 +1,6 @@
 using Framework.DI.Autofac;
+using Framework.Security;
+using GenericWebApp.Middlewares;
 using GenericWebApp.Modules;
 using GenericWebApp.Options;
 using MongoDB.Bson;
@@ -13,13 +15,19 @@ builder.Services.AddSwagger();
 
 var mongoOptions = new MongoOptions();
 builder.Configuration.GetSection(nameof(MongoOptions)).Bind(mongoOptions);
+
+var securityOptions = new SecurityOptions();
+builder.Configuration.GetSection(nameof(SecurityOptions)).Bind(securityOptions);
     
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 var provider = AutofacBuilder
     .Start()
     .AddCqrs()
     .AddMongoDd(mongoOptions)
+    .AddSecurity(securityOptions)
     .Build();
 
 builder.Host.UseServiceProviderFactory(provider);
@@ -38,6 +46,9 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseMiddleware<AuthenticationMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -1,8 +1,8 @@
-using Framework.CQRS.Commands;
+using Framework.CQRS.Implementation;
 
 namespace Application.Commands.Weather;
 
-public class WeatherCommand : ICommand
+public class WeatherCommand : CommandBase
 {
     public string Value { get; set; }
 }

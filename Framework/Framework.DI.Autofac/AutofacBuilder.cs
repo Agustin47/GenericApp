@@ -6,6 +6,7 @@ using Framework.CQRS.Commands;
 using Framework.CQRS.Implementation;
 using Framework.Database;
 using Framework.Database.MongoDB;
+using Framework.Security;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
@@ -56,7 +57,15 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
 
         return this;
     }
-    
+
+    public IAutofacBuilder AddSecurity(ISecurityOptions options)
+    {
+        _builder.Register(s => options).As<ISecurityOptions>().SingleInstance();
+        _builder.RegisterType<AuthenticationMiddleware>();
+        _builder.RegisterType<SecurityService>().As<ISecurityService>().SingleInstance();
+        return this;
+    }
+
     public IServiceProviderFactory<IServiceCollection> Build() => this;
     
     public IServiceCollection CreateBuilder(IServiceCollection services) => services;
@@ -73,5 +82,6 @@ public interface IAutofacBuilder
 {
     IAutofacBuilder AddCqrs(string? assemblyName = "Application");
     IAutofacBuilder AddMongoDd(IMongoOptions  options);
+    IAutofacBuilder AddSecurity(ISecurityOptions options);
     IServiceProviderFactory<IServiceCollection> Build();
 }

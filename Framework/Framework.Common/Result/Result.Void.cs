@@ -2,7 +2,8 @@ namespace Framework.Common.Result;
 
 public class Result : Result<Result>
 {
-    private Result(params ValidationError[] validationErrors) : base() { }
+    private Result() : base() { }
+    private Result(params ValidationError[] validationErrors) : base(validationErrors) { }
     private Result(string message, string errorCode) : base(message, errorCode) { }
     
     public static Result Success() => new();
