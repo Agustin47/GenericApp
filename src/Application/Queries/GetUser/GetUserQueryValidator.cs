@@ -3,7 +3,7 @@ using Framework.CQRS.Implementation;
 
 namespace Application.Queries.GetUser;
 
-public class GetUserQuery : QueryBase<User>
+public class GetUserQueryValidator : QueryBaseValidator<GetUserQuery, User>
 {
     
 }

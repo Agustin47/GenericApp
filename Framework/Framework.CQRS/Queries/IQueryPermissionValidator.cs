@@ -2,9 +2,9 @@ using Framework.Common.Result;
 
 namespace Framework.CQRS.Queries;
 
-public interface IQueryValidator<in TQuery, TResult>
+public interface IQueryPermissionValidator<in TQuery, TResult>
     where TQuery : IQuery<TResult>
     where TResult : class
 {
-    Result ValidateQuery(TQuery command);
+    Result ValidatePermission(TQuery query);
 }

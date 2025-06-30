@@ -2,7 +2,7 @@
 
 public class Result<T>
 {
-    private readonly List<ValidationError> _validationErrors;
+    private readonly List<ErrorValidation> _validationErrors;
     private readonly bool _isSuccess;
     public T? Value { get; private set; }
 
@@ -10,31 +10,31 @@ public class Result<T>
     {
         Value = default;
         _isSuccess = true;
-        _validationErrors = new List<ValidationError>();       
+        _validationErrors = new List<ErrorValidation>();       
     }
     
     private Result(T? value)
     {
         Value = value;
         _isSuccess = true;
-        _validationErrors = new List<ValidationError>();
+        _validationErrors = new List<ErrorValidation>();
     }
 
-    protected Result(params ValidationError[] validationErrors)
+    protected Result(params ErrorValidation[] validationErrors)
     {
         Value = default;
         _isSuccess = false;
-        _validationErrors = new List<ValidationError>(validationErrors);
+        _validationErrors = new List<ErrorValidation>(validationErrors);
     }
 
     protected Result(string error, string errorCode)
     {
         Value = default;
         _isSuccess = false;
-        _validationErrors = [new ValidationError(error, errorCode)];
+        _validationErrors = [new ErrorValidation(error, errorCode)];
     }
 
-    public IReadOnlyCollection<ValidationError> ValidationErrors => _validationErrors.AsReadOnly();
+    public IReadOnlyCollection<ErrorValidation> ValidationErrors => _validationErrors.AsReadOnly();
 
     public bool IsFailed  => !_isSuccess;
 
@@ -46,6 +46,6 @@ public class Result<T>
     }
 
     protected static Result<T> Success(T value) => new(value);
-    public static Result<T> Failed(params ValidationError[] validationErrors) => new(validationErrors);
+    public static Result<T> Failed(params ErrorValidation[] validationErrors) => new(validationErrors);
     public static Result<T> Failed(string error, string errorCode) => new(error, errorCode);
 }

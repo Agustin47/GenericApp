@@ -16,10 +16,23 @@ public class CommandBus : ICommandBus
     {
         try
         {
-            // get commandHandler which implement ICommandHandler<TCommand>
             if(_serviceProvider.GetService(typeof(ICommandHandler<TCommand>)) is not ICommandHandler<TCommand> handler)
                 throw new Exception("Handler not found");
 
+            if (_serviceProvider.GetService(typeof(ICommandValidator<TCommand>)) is ICommandValidator<TCommand> commandValidator)
+            {
+                var validationResult = commandValidator.ValidateCommand(command);
+                if (validationResult.IsFailed)
+                    return validationResult;
+            }
+
+            if (_serviceProvider.GetService(typeof(ICommandPermissionValidator<TCommand>)) is ICommandPermissionValidator<TCommand> permissionValidator)
+            {
+                var permissionResult = permissionValidator.ValidatePermission(command);
+                if (permissionResult.IsFailed)
+                    return permissionResult;
+            }
+            
             return await handler.Handle(command);
         }
         catch (Exception ex)

@@ -17,7 +17,7 @@ public interface ISecurityService
     Result IntrospectToken(string token, string username);
     Result<Token> RefreshToken(string token, string refreshToken);
     Result Logout(string username);
-    Result RegisterUser(string username, string password, string email, string name, string lastName);
+    Result RegisterUser(string username, string password, string email, string name, string lastName, string role, string[] permissions);
     Result ChangePassword(string username, string password);
     Result<UserContext> GetUserContext(string token);
 }
@@ -109,7 +109,7 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
         return Result.Success();
     }
 
-    public Result RegisterUser(string username, string password, string email, string name, string lastName)
+    public Result RegisterUser(string username, string password, string email, string name, string lastName, string role, string[] permissions)
     {
         var salt = RandomNumberGenerator.GetBytes(128 / 8);
         
@@ -121,10 +121,8 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
             Email = email,
             Name = name,
             LastName = lastName,
-            Permissions = new List<string>()
-            {
-                "User", "Admin"
-            }
+            Role = role,
+            Permissions = permissions.ToList()
         };
         
         _users.InsertOne(user);
@@ -175,7 +173,8 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
             new (JwtRegisteredClaimNames.PreferredUsername, user.Username),
             new (JwtRegisteredClaimNames.Email, user.Email),
             new (JwtRegisteredClaimNames.Name, user.Name),
-            new (JwtRegisteredClaimNames.FamilyName, user.LastName)
+            new (JwtRegisteredClaimNames.FamilyName, user.LastName),
+            new (JwtRegisteredClaimNames.Profile, user.LastName),
         };
         
         foreach (var userPermission in user.Permissions)

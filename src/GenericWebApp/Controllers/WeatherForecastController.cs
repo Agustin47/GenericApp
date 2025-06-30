@@ -1,3 +1,4 @@
+using Application.Commands.Weather;
 using Application.Queries.GetUser;
 using Domain;
 using Framework.CQRS.Commands;
@@ -16,6 +17,11 @@ public class WeatherForecastController(ICommandBus commandBus, IQueryBus queryBu
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IActionResult> Get()
     {
+
+        // WeatherCommand command = new();
+        // var r1 = await commandBus.Handle(command);
+        
+        
         GetUserQuery query = new();
         var result = await queryBus.Handle<User>(query);
         

@@ -36,9 +36,29 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
             .AsClosedTypesOf(typeof(ICommandHandler<>))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
+        
+        _builder.RegisterAssemblyTypes(assembly)
+            .AsClosedTypesOf(typeof(ICommandValidator<>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
 
         _builder.RegisterAssemblyTypes(assembly)
+            .AsClosedTypesOf(typeof(ICommandPermissionValidator<>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+        
+        _builder.RegisterAssemblyTypes(assembly)
             .AsClosedTypesOf(typeof(IQueryHandler<,>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+        
+        _builder.RegisterAssemblyTypes(assembly)
+            .AsClosedTypesOf(typeof(IQueryValidator<,>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+        
+        _builder.RegisterAssemblyTypes(assembly)
+            .AsClosedTypesOf(typeof(IQueryPermissionValidator<,>))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
         
