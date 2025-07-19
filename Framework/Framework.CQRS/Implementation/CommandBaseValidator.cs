@@ -9,6 +9,10 @@ public abstract class CommandBaseValidator<TCommand> : AbstractValidator<TComman
     public Result ValidateCommand(TCommand command)
     {
         var fluentResult = Validate(command);
-        return Result.Success();
+        if (fluentResult.IsValid)
+            return Result.Success();
+
+        var causes = fluentResult.Errors.Select(x => new ErrorCause(x.PropertyName, x.ErrorMessage)).ToArray();
+        return Result.Failed(ExpectedErrors.Validation(causes));
     }
 }

@@ -1,21 +1,34 @@
+using Application.Commands.UserChangePassword;
+using Application.Commands.UserCreation;
+using Framework.CQRS.Commands;
 using Framework.Security;
 using GenericWebApp.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenericWebApp.Controllers;
 
-// TODO: move to command
 [ApiController]
 [Route("[controller]")]
-public class UserManagementController(ISecurityService securityService, ILogger<AuthorizationController> logger)
-    : ControllerBase
+public class UserManagementController(ICommandBus commandBus, ISecurityService securityService, ILogger<AuthorizationController> logger)
+    : _Base(securityService)
 {
+
     [HttpPost]
-    public IActionResult CreateUser([FromBody] UmCreateUser User)
+    public async Task<IActionResult> CreateUser([FromBody] UmCreateUser User)
     {
-        var registerUserResult = securityService.RegisterUser(User.Username, User.Password, User.Email, User.Name, User.LastName, User.Role, User.Permissions);
-        if(registerUserResult.IsFailed)
-            return BadRequest(registerUserResult.ValidationErrors);;
+        CreateUserCmd command = new()
+        {
+            Username = User.Username,
+            Password = User.Password,
+            Email = User.Email,
+            Name = User.Name,
+            LastName = User.LastName,
+            Role = User.Role,
+            UserContext = GetUserContext(),
+        };
+        var createUserResult = await commandBus.Handle(command);
+        if (createUserResult.IsFailed)
+            return BadRequest();
         
         return Ok();
     }
@@ -23,9 +36,15 @@ public class UserManagementController(ISecurityService securityService, ILogger<
     [HttpPost("change-password")]
     public IActionResult ChangePassword([FromBody] UmChangePassword changePassword)
     {
-        var changePasswordResult = securityService.ChangePassword(changePassword.Username, changePassword.NewPassword);
-        if(changePasswordResult.IsFailed)
-            return BadRequest(changePasswordResult.ValidationErrors);;
+        ChangePasswordCmd command = new()
+        {
+            Username = changePassword.Username,
+            NewPassword = changePassword.NewPassword,
+            UserContext = GetUserContext(),
+        };
+        var createUserResult = commandBus.Handle(command);
+        if (createUserResult.IsFaulted)
+            return BadRequest();
         
         return Ok();
     }

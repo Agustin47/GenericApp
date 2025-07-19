@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Framework.CQRS\Framework.CQRS.csproj" />
       <ProjectReference Include="..\..\Framework\Framework.Database.MongoDB\Framework.Database.MongoDB.csproj" />
       <ProjectReference Include="..\..\Framework\Framework.DI.Autofac\Framework.DI.Autofac.csproj" />
       <ProjectReference Include="..\Application\Application.csproj" />

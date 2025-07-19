@@ -7,13 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="MongoDB.Driver">
-        <HintPath>..\..\..\..\..\.nuget\packages\mongodb.driver\3.4.0\lib\net6.0\MongoDB.Driver.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Framework.Common\Framework.Common.csproj" />
+      <ProjectReference Include="..\Framework.Database\Framework.Database.csproj" />
     </ItemGroup>
 
     <ItemGroup>

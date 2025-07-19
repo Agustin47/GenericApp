@@ -1,13 +1,12 @@
-﻿using System.Linq.Expressions;
-using Framework.Common.Result;
+﻿using Framework.Common.Result;
 using Framework.Specification;
 using MongoDB.Driver;
 
 namespace Framework.Database.MongoDB;
 
-public class MongoRepository<T>(IMongoDatabase mongoDatabase) : IRepository<T>
+public class MongoRepository<T>(IMongoDatabase mongoDatabase, string? prefix = null) : IRepository<T>
 {
-    private readonly IMongoCollection<T> _collection = mongoDatabase.GetCollection<T>(typeof(T).Name);
+    private readonly IMongoCollection<T> _collection = mongoDatabase.GetCollection<T>($"{(prefix != null ? $"{prefix}-" : string.Empty)}{typeof(T).Name}");
 
     public async Task<Result> CreateAsync(T model)
     {
@@ -15,9 +14,10 @@ public class MongoRepository<T>(IMongoDatabase mongoDatabase) : IRepository<T>
         return Result.Success();
     }
 
-    public async Task<Result> DeleteAsync(string id)
+    public async Task<Result> DeleteAsync(Guid id)
     {
-        //await _collection.DeleteOneAsync(c => c == id);
+        var deleteFilter = Builders<T>.Filter.Eq("_id", id);
+        await _collection.DeleteOneAsync(deleteFilter);
         return Result.Success();
     }
 
@@ -45,9 +45,14 @@ public class MongoRepository<T>(IMongoDatabase mongoDatabase) : IRepository<T>
             var andCondition = Specification<T>.And(query.Specifications.ToArray());
             collection = collection.Where(andCondition.IsSatisfiedBy);
         }
-        
-        // if (query.Sorting != null)
-        //     collection = query.Sorting.Ascending ? collection.OrderBy($"x => x.{query.Sorting.FieldName}");
+
+        if (query.Sorting != null)
+        {
+            var property = typeof(T).GetProperty(query.Sorting.FieldName);
+            collection = query.Sorting.Ascending
+                ? collection.OrderBy(x => property?.GetValue(x, null))
+                : collection.OrderByDescending(x => property?.GetValue(x, null));
+        }
         
         if(query.Paging != null)
             collection = collection

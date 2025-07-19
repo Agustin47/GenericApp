@@ -23,17 +23,17 @@ public class Specification<T> : ISpecification<T>
 
     public static Specification<T> And(params ISpecification<T>[] specifications)
     {
-        var spec =  Specification<T>.True;
+        var spec =  True;
         foreach (var specification in specifications)
-            spec = spec & specification;
+            spec &= specification;
         return spec;
     }
     
     public static Specification<T> Or(params ISpecification<T>[] specifications)
     {
-        var spec =  Specification<T>.True;
+        var spec =  True;
         foreach (var specification in specifications)
-            spec = spec | specification;
+            spec |= specification;
         return spec;
     }
 }

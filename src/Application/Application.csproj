@@ -9,8 +9,6 @@
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
       <ProjectReference Include="..\..\Framework\Framework.CQRS\Framework.CQRS.csproj" />
-      <ProjectReference Include="..\..\Framework\Framework.Database\Framework.Database.csproj" />
-      <ProjectReference Include="..\..\Framework\Framework.Specification\Framework.Specification.csproj" />
     </ItemGroup>
 
 </Project>

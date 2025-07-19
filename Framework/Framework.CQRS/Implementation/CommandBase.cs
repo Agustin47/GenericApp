@@ -3,7 +3,7 @@ using Framework.Security;
 
 namespace Framework.CQRS.Implementation;
 
-public class CommandBase : ICommand
+public abstract class CommandBase : ICommand
 {
-    public UserContext UserContext { get; set; }
+    public required UserContext UserContext { get; set; }
 }

@@ -5,7 +5,7 @@ namespace Framework.Database;
 public interface IRepository<T>
 {
     Task<Result> CreateAsync(T model);
-    Task<Result> DeleteAsync(string id);
+    Task<Result> DeleteAsync(Guid id);
     
     Task<Result<List<T>>> Filter(QueryRepository<T> query);
     Task<Result<List<TR>>> Filter<TR>(QueryRepository<T> query, Func<T, TR> map);

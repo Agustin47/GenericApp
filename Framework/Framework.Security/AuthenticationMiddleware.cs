@@ -20,10 +20,10 @@ public class AuthenticationMiddleware(ISecurityService security, ILogger<Authent
 
         var token = context.Request.Headers["Authorization"].ToString() ?? string.Empty;
         token = token.Replace("Bearer ", string.Empty);
-        var userContextResult = security.GetUserContext(token);
+        var userContextResult = await security.GetUserContext(token);
+        var introspectionResult = await security.IntrospectToken(token, userContextResult.Value?.Username ?? string.Empty);;
 
-        if (userContextResult.IsFailed ||
-            security.IntrospectToken(token, userContextResult.Value.Username).IsFailed)
+        if (userContextResult.IsFailed || introspectionResult.IsFailed)
         {
             await ReturnUnauthorize(context);
             return;

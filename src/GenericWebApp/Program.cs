@@ -1,5 +1,6 @@
 using Framework.DI.Autofac;
 using Framework.Security;
+using GenericWebApp;
 using GenericWebApp.Middlewares;
 using GenericWebApp.Modules;
 using GenericWebApp.Options;
@@ -22,6 +23,7 @@ builder.Configuration.GetSection(nameof(SecurityOptions)).Bind(securityOptions);
 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Services.AddHostedService<AutomaticStarter>();
 
 var provider = AutofacBuilder
     .Start()

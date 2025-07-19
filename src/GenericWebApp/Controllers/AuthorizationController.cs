@@ -12,9 +12,9 @@ public class AuthorizationController(ISecurityService securityService, ILogger<A
 {
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserLogin user)
+    public async Task<IActionResult> Login([FromBody] UserLogin user)
     {
-        var loginResult = securityService.Login(user.Username, user.Password);
+        var loginResult = await securityService.Login(user.Username, user.Password);
         
         if(loginResult.IsFailed)
             return Unauthorized("Username or password are incorrect");
@@ -23,9 +23,9 @@ public class AuthorizationController(ISecurityService securityService, ILogger<A
     }
     
     [HttpPost("refresh-token")]
-    public IActionResult RefreshToken([FromBody] Refresh token)
+    public async Task<IActionResult> RefreshToken([FromBody] Refresh token)
     {
-        var refreshTokenResult = securityService.RefreshToken(token.Token, token.RefreshToken);
+        var refreshTokenResult = await securityService.RefreshToken(token.Token, token.RefreshToken);
         
         if(refreshTokenResult.IsFailed)
             return Unauthorized("Token is invalid");
@@ -34,9 +34,9 @@ public class AuthorizationController(ISecurityService securityService, ILogger<A
     }
     
     [HttpPost("logout")]
-    public IActionResult Logout([FromBody] string username)
+    public async Task<IActionResult> Logout([FromBody] string username)
     {
-        var logoutResult = securityService.Logout(username);
+        var logoutResult = await securityService.Logout(username);
 
         if (logoutResult.IsFailed)
             return BadRequest("Something went wrong");

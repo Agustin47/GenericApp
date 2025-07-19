@@ -1,3 +1,4 @@
+using Framework.Common;
 using Framework.Security.Role;
 
 namespace Application.Roles;
@@ -9,4 +10,7 @@ public class Rol : RolBase
     public static readonly Rol SolicitationUser = new("SolicitationUser", "Rol to allow the user to create/edit solicitations but approve", new[] { Permission.SolicitationModify, Permission.SolicitationGet });
 
     private Rol(string name, string description, Permission[] permissions) : base(name, description, permissions){}
+    
+    public static Rol? GetByName(string name) =>
+        ValueObjectExtensions.GetAllOptionsAsList<Rol>().FirstOrDefault(x => x.Name == name);
 }

@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
+using Framework.Database;
 using Framework.Common.Result;
 using Framework.Security.Dto;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using MongoDB.Driver;
 
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,30 +13,35 @@ namespace Framework.Security;
 
 public interface ISecurityService
 {
-    Result<Token> Login(string username, string password);
-    Result IntrospectToken(string token, string username);
-    Result<Token> RefreshToken(string token, string refreshToken);
-    Result Logout(string username);
-    Result RegisterUser(string username, string password, string email, string name, string lastName, string role, string[] permissions);
-    Result ChangePassword(string username, string password);
-    Result<UserContext> GetUserContext(string token);
+    Task<Result<Token>> Login(string username, string password);
+    Task<Result> IntrospectToken(string token, string username);
+    Task<Result<Token>> RefreshToken(string token, string refreshToken);
+    Task<Result> Logout(string username);
+    Task<Result> RegisterUser(string username, string password, string email, string name, string lastName, string role, string[] permissions);
+    Task<Result> ChangePassword(string username, string password);
+    Task<Result<UserContext>> GetUserContext(string token);
 }
 
-public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions options) : ISecurityService
+public class SecurityService(IRepositoryFactory repositoryFactory, ISecurityOptions options) : ISecurityService
 {
     private const string _prefix = "Security";
-    private readonly IMongoCollection<Token> _token = mongoDatabase.GetCollection<Token>($"{_prefix}-{nameof(Token)}");
-    private readonly IMongoCollection<UserLogin> _userLogin = mongoDatabase.GetCollection<UserLogin>($"{_prefix}-{nameof(UserLogin)}");
-    private readonly IMongoCollection<User> _users = mongoDatabase.GetCollection<User>($"{_prefix}-{nameof(User)}");
+    private readonly IRepository<Token> _token = repositoryFactory.GetRepository<Token>(_prefix);
+    private readonly IRepository<UserLogin> _userLogin = repositoryFactory.GetRepository<UserLogin>(_prefix);
+    private readonly IRepository<User> _users = repositoryFactory.GetRepository<User>(_prefix);
     
     private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler = new();
 
-    public Result<Token> Login(string username, string password)
+    public async Task<Result<Token>> Login(string username, string password)
     {
-        var user = _users.Find(u => u.Username == username).FirstOrDefault();
-        if (user == null)
+        var spec1 = Specification.Specification<User>.Create(u => u.Username == username);
+        var userQuery = QueryRepositoryBuilder<User>.Create()
+            .AddSpecs(spec1)
+            .Build();
+        var userResult = await _users.FirstOrDefault(userQuery);
+        if (userResult.IsFailed || userResult.Value == null)
             return Result.Failed(SecurityErrors.LoginFailed);
         
+        var user = userResult.Value;
         var hashedPassword = HashPassword(password, user.Salt);
         if(user.Password != hashedPassword)
             return Result.Failed(SecurityErrors.LoginFailed);
@@ -57,35 +62,50 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
             Login = DateTime.UtcNow,
         };
         
-        _token.DeleteMany(t => t.Username == username);
-        _token.InsertOne(token);
-        _userLogin.InsertOne(userLogin);
+        await CleanAndSaveToken(token);
+        await _userLogin.CreateAsync(userLogin);
         
         return Result.Success(token);
     }
 
-    public Result IntrospectToken(string token, string username)
+    public async Task<Result> IntrospectToken(string token, string username)
     {
         var tokenClaims = ValidateToken(token);
         if(tokenClaims == null)
             return Result.Failed();
         
-        var tokenEntity = _token
-            .Find(t => t.Value == token && t.Username == username && t.Expire > DateTime.UtcNow)
-            .FirstOrDefault();
-        if(tokenEntity == null)
+        var spec1 = Specification.Specification<Token>.Create(t => t.Value == token && t.Username == username && t.Expire > DateTime.UtcNow);
+        var tokenQuery = QueryRepositoryBuilder<Token>.Create()
+            .AddSpecs(spec1)
+            .Build();
+        
+        var tokenResult = await _token.FirstOrDefault(tokenQuery);
+        if(tokenResult.IsFailed || tokenResult.Value == null)
             return Result.Failed();
         
         return Result.Success();
     }
 
-    public Result<Token> RefreshToken(string token, string refreshToken)
+    public async Task<Result<Token>> RefreshToken(string token, string refreshToken)
     {
-        var tokenEntity = _token.Find(t => t.Value == token && t.RefreshToken == refreshToken).FirstOrDefault();
-        if (tokenEntity == null)
+        var spec1 = Specification.Specification<Token>.Create(t => t.Value == token && t.RefreshToken == refreshToken);
+        var tokenQuery = QueryRepositoryBuilder<Token>.Create()
+            .AddSpecs(spec1)
+            .Build();
+        var tokenResult = await _token.FirstOrDefault(tokenQuery);
+        if (tokenResult.IsFailed || tokenResult.Value == null)
             return Result.Failed(SecurityErrors.RefreshTokenFailed);
 
-        var user = _users.Find(u => u.Username == tokenEntity.Username).FirstOrDefault();
+        var tokenEntity = tokenResult.Value;
+        var spec2 = Specification.Specification<User>.Create(u => u.Username == tokenEntity.Username);
+        var userQuery = QueryRepositoryBuilder<User>.Create()
+            .AddSpecs(spec2)
+            .Build();
+        var userResult = await _users.FirstOrDefault(userQuery);
+        if (userResult.IsFailed || userResult.Value == null)
+            return Result.Failed(SecurityErrors.RefreshTokenFailed);
+        
+        var user = userResult.Value;
         var newTokenValue = GenerateToken(user);
         
         Token newToken = new()
@@ -97,19 +117,17 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
             Expire = DateTime.UtcNow.AddMinutes(10)
         };
         
-        _token.DeleteMany(t => t.Username == tokenEntity.Username);
-        _token.InsertOne(newToken);
-        
+        await CleanAndSaveToken(newToken);
         return Result.Success(newToken);
     }
     
-    public Result Logout(string username)
+    public async Task<Result> Logout(string username)
     {
-        _token.DeleteMany(t => t.Username == username);
+        await CleanAndSaveToken(new(){Username = username});
         return Result.Success();
     }
 
-    public Result RegisterUser(string username, string password, string email, string name, string lastName, string role, string[] permissions)
+    public async Task<Result> RegisterUser(string username, string password, string email, string name, string lastName, string role, string[] permissions)
     {
         var salt = RandomNumberGenerator.GetBytes(128 / 8);
         
@@ -125,36 +143,40 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
             Permissions = permissions.ToList()
         };
         
-        _users.InsertOne(user);
+        await _users.CreateAsync(user);
         
         return Result.Success();
     }
     
-    public Result ChangePassword(string username, string password)
+    public async Task<Result> ChangePassword(string username, string password)
     {
-        var user = _users.Find(u => u.Username == username).FirstOrDefault();
-        if (user == null)
+        var spec1 = Specification.Specification<User>.Create(u => u.Username == username);
+        var userQuery = QueryRepositoryBuilder<User>.Create()
+            .AddSpecs(spec1)
+            .Build();
+        var userResult = await _users.FirstOrDefault(userQuery);
+        
+        if (userResult.IsFailed || userResult.Value == null)
             return Result.Failed(SecurityErrors.LoginFailed);
+        var user = userResult.Value;
         
         var salt = RandomNumberGenerator.GetBytes(128 / 8);
         user.Salt = salt;
         user.Password = HashPassword(password, salt);
         
-        _users.ReplaceOne(u => u.Username == username, user);
+        //_users.ReplaceOne(u => u.Username == username, user);
         return Result.Success();
     }
 
-    public Result<UserContext> GetUserContext(string token)
+    public async Task<Result<UserContext>> GetUserContext(string token)
     {
         var claim = ValidateToken(token);
         if (claim == null) return Result.Failed();
+
+        var username = claim.Claims.First(c => c.Type == JwtRegisteredClaimNames.PreferredUsername).Value;
+        var permissions = claim.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
         
-        UserContext userContext = new()
-        {
-            Username = claim.Claims.First(c => c.Type == JwtRegisteredClaimNames.PreferredUsername).Value,
-            Permissions = claim.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList()
-        };
-        
+        UserContext userContext = new(username, permissions);
         return Result.Success(userContext);
     }
     private string HashPassword(string password, byte[] salt)
@@ -194,8 +216,26 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
         return _jwtSecurityTokenHandler.WriteToken(token);
     }
 
+    private async Task CleanAndSaveToken(Token token)
+    {
+        var spec1 = Specification.Specification<Token>.Create(t => t.Username == token.Username);
+        var tokenQuery = QueryRepositoryBuilder<Token>.Create()
+            .AddSpecs(spec1)
+            .Build();
+        
+        var tokenListResult = await _token.Filter(tokenQuery);
+        var tokenList = tokenListResult.Value ?? [];
+        foreach (var t in tokenList)
+            await _token.DeleteAsync(t.Id);
+        
+        if(!string.IsNullOrWhiteSpace(token.Value))
+            await _token.CreateAsync(token);
+    }
+    
     private ClaimsPrincipal? ValidateToken(string token)
     {
+        if (string.IsNullOrEmpty(token))
+            return null;
         try
         {
             TokenValidationParameters tokenValidationParameters = new()
@@ -220,7 +260,6 @@ public class SecurityService(IMongoDatabase mongoDatabase, ISecurityOptions opti
         }
     }
     
-
     
     private string GenerateRefreshToken()
     {

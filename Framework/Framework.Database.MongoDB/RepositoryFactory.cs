@@ -4,9 +4,9 @@ namespace Framework.Database.MongoDB;
 
 public class RepositoryFactory(IServiceProvider serviceProvider) : IRepositoryFactory
 {
-    public IRepository<T> GetRepository<T>()
+    public IRepository<T> GetRepository<T>(string? prefix = null)
     {
         IMongoDatabase database = (IMongoDatabase)serviceProvider.GetService(typeof(IMongoDatabase));
-        return new MongoRepository<T>(database);
+        return new MongoRepository<T>(database, prefix);
     }
 }

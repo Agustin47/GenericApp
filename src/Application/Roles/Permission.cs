@@ -1,3 +1,4 @@
+using Framework.Common;
 using Framework.Security.Role;
 
 namespace Application.Roles;
@@ -12,4 +13,7 @@ public class Permission : PermissionBase
     public static readonly Permission SolicitationApprove = new("solicitation:approve", "Allow to approve solicitations");
 
     private Permission(string name, string describe) : base(name, describe){}
+
+    public static Permission? GetByName(string name) =>
+        ValueObjectExtensions.GetAllOptionsAsList<Permission>().FirstOrDefault(x => x.Name == name);
 }
