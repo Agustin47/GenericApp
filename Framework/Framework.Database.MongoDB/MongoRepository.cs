@@ -1,10 +1,11 @@
-﻿using Framework.Common.Result;
+﻿using Framework.Common;
+using Framework.Common.Result;
 using Framework.Specification;
 using MongoDB.Driver;
 
 namespace Framework.Database.MongoDB;
 
-public class MongoRepository<T>(IMongoDatabase mongoDatabase, string? prefix = null) : IRepository<T>
+public class MongoRepository<T>(IMongoDatabase mongoDatabase, string? prefix = null) : IRepository<T> where T : IEntity
 {
     private readonly IMongoCollection<T> _collection = mongoDatabase.GetCollection<T>($"{(prefix != null ? $"{prefix}-" : string.Empty)}{typeof(T).Name}");
 
@@ -14,6 +15,12 @@ public class MongoRepository<T>(IMongoDatabase mongoDatabase, string? prefix = n
         return Result.Success();
     }
 
+    public async Task<Result> UpdateAsync(T model)
+    {
+        await _collection.ReplaceOneAsync(i => i.Id == model.Id,model);
+        return Result.Success();
+    }
+    
     public async Task<Result> DeleteAsync(Guid id)
     {
         var deleteFilter = Builders<T>.Filter.Eq("_id", id);

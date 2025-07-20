@@ -164,7 +164,7 @@ public class SecurityService(IRepositoryFactory repositoryFactory, ISecurityOpti
         user.Salt = salt;
         user.Password = HashPassword(password, salt);
         
-        //_users.ReplaceOne(u => u.Username == username, user);
+        await _users.UpdateAsync(user);
         return Result.Success();
     }
 

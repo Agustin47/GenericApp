@@ -7,8 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Framework.Common\Framework.Common.csproj" />
-      <ProjectReference Include="..\..\Framework\Framework.Domain.Events\Framework.Domain.Events.csproj" />
+      <ProjectReference Include="..\Framework.EventManager\Framework.EventManager.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="MongoDB.Driver" Version="3.4.0" />
+    </ItemGroup>
 </Project>

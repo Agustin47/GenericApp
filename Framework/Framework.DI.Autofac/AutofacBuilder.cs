@@ -6,6 +6,9 @@ using Framework.CQRS.Commands;
 using Framework.CQRS.Implementation;
 using Framework.Database;
 using Framework.Database.MongoDB;
+using Framework.Domain.Events;
+using Framework.EventManager;
+using Framework.EventManager.MongoDb;
 using Framework.Security;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
@@ -26,6 +29,19 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
     {
         var builder = new ContainerBuilder();
         return new AutofacBuilder(builder);
+    }
+
+    public IAutofacBuilder AddDomain()
+    {
+        var assembly = Assembly.Load("Domain");
+        
+        _builder.RegisterAssemblyTypes(assembly)
+            .AsClosedTypesOf(typeof(IEvent<>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+        
+        _builder.RegisterType<DomainEntityFactory>().As<IDomainEntityFactory>().SingleInstance();
+        return this;
     }
 
     public IAutofacBuilder AddCqrs(string? assemblyName = "Application")
@@ -86,6 +102,20 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
         return this;
     }
 
+    public IAutofacBuilder AddEventManager(string? assemblyName = "Application")
+    {
+        var assembly = Assembly.Load(assemblyName);
+        _builder.RegisterAssemblyTypes(assembly)
+            .AsClosedTypesOf(typeof(IEventProjection<>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+        
+        _builder.RegisterType<EventDbFactory>().As<IEventDbFactory>().SingleInstance();
+        _builder.RegisterType<EventIndexDbMongo>().As<IEventIndexDb>().SingleInstance();
+        _builder.RegisterType<EventManager.EventManager>().As<IEventManager>().InstancePerLifetimeScope();
+        return this;
+    }
+
     public IServiceProviderFactory<IServiceCollection> Build() => this;
     
     public IServiceCollection CreateBuilder(IServiceCollection services) => services;
@@ -100,8 +130,10 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
 
 public interface IAutofacBuilder
 {
+    IAutofacBuilder AddDomain();
     IAutofacBuilder AddCqrs(string? assemblyName = "Application");
     IAutofacBuilder AddMongoDd(IMongoOptions  options);
     IAutofacBuilder AddSecurity(ISecurityOptions options);
+    IAutofacBuilder AddEventManager(string? assemblyName = "Application");
     IServiceProviderFactory<IServiceCollection> Build();
 }

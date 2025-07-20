@@ -1,6 +1,8 @@
+using Framework.Common;
+
 namespace Framework.Security.Dto;
 
-public class User
+public class User : IEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Username { get; set; }

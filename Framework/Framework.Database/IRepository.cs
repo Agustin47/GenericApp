@@ -1,10 +1,12 @@
-﻿using Framework.Common.Result;
+﻿using Framework.Common;
+using Framework.Common.Result;
 
 namespace Framework.Database;
 
-public interface IRepository<T>
+public interface IRepository<T> where T : IEntity
 {
     Task<Result> CreateAsync(T model);
+    Task<Result> UpdateAsync(T model);
     Task<Result> DeleteAsync(Guid id);
     
     Task<Result<List<T>>> Filter(QueryRepository<T> query);
