@@ -1,17 +1,19 @@
-using System.Reflection;
 using Autofac;
+using MongoDB.Driver;
+using System.Reflection;
 using Autofac.Extensions.DependencyInjection;
 using Framework.CQRS.Queries;
 using Framework.CQRS.Commands;
 using Framework.CQRS.Implementation;
 using Framework.Database;
 using Framework.Database.MongoDB;
+using Framework.Domain;
 using Framework.Domain.Events;
+using Framework.Domain.Repository;
 using Framework.EventManager;
 using Framework.EventManager.MongoDb;
 using Framework.Security;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
 
 namespace Framework.DI.Autofac;
 
@@ -33,17 +35,9 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
 
     public IAutofacBuilder AddDomain()
     {
-        var assembly = Assembly.Load("Domain");
-        
-        _builder.RegisterAssemblyTypes(assembly)
-            .AsClosedTypesOf(typeof(IEvent<>))
-            .AsImplementedInterfaces()
-            .InstancePerLifetimeScope();
-        
-        _builder.RegisterType<DomainEntityFactory>().As<IDomainEntityFactory>().SingleInstance();
         return this;
     }
-
+    
     public IAutofacBuilder AddCqrs(string? assemblyName = "Application")
     {
         var assembly = Assembly.Load(assemblyName);
@@ -87,6 +81,7 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
     public IAutofacBuilder AddMongoDd(IMongoOptions options)
     {
         _builder.RegisterType<RepositoryFactory>().As<IRepositoryFactory>().SingleInstance();
+        _builder.RegisterType<DomainRepositoryFactory>().As<IDomainRepositoryFactory>().SingleInstance();
         
         var mongoClient = new MongoClient(options.ConnectionString);
         _builder.Register<IMongoDatabase>(x => mongoClient.GetDatabase(options.DatabaseName));
@@ -110,6 +105,16 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
         
+        var domainAssembly = Assembly.Load("Domain");
+        
+        // TodoCheck If needed
+        _builder.RegisterAssemblyTypes(domainAssembly)
+            .AsClosedTypesOf(typeof(IEvent<>))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+        
+        //_builder.RegisterType<DomainEventEntityFactory>().As<IDomainEntityFactory>().SingleInstance();
+        _builder.RegisterType<DomainRepositoryEntityFactory>().As<IDomainEntityFactory>().SingleInstance();
         _builder.RegisterType<EventDbFactory>().As<IEventDbFactory>().SingleInstance();
         _builder.RegisterType<EventIndexDbMongo>().As<IEventIndexDb>().SingleInstance();
         _builder.RegisterType<EventManager.EventManager>().As<IEventManager>().InstancePerLifetimeScope();

@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.EventManager.Mong
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Domain.Events", "Framework\Framework.Domain.Events\Framework.Domain.Events.csproj", "{B9FB9EDC-6994-4CFF-AF53-400F30BD1F5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Domain.Repository", "Framework\Framework.Domain.Repository\Framework.Domain.Repository.csproj", "{ABCCF243-5DE9-4FEA-BCB8-F989697068E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,10 @@ Global
 		{B9FB9EDC-6994-4CFF-AF53-400F30BD1F5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9FB9EDC-6994-4CFF-AF53-400F30BD1F5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9FB9EDC-6994-4CFF-AF53-400F30BD1F5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABCCF243-5DE9-4FEA-BCB8-F989697068E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABCCF243-5DE9-4FEA-BCB8-F989697068E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABCCF243-5DE9-4FEA-BCB8-F989697068E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABCCF243-5DE9-4FEA-BCB8-F989697068E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3F30426A-E546-4CA9-9859-AEC09AAF96D3} = {B12C7B2E-95A7-4C1B-8A83-ABC74118F742}
@@ -110,5 +116,6 @@ Global
 		{C1E22C40-8C39-41FF-A74D-5DA7D2B220BD} = {B12C7B2E-95A7-4C1B-8A83-ABC74118F742}
 		{4DBF7384-A82A-48E3-8D40-8C129721E6EF} = {B12C7B2E-95A7-4C1B-8A83-ABC74118F742}
 		{B9FB9EDC-6994-4CFF-AF53-400F30BD1F5F} = {B12C7B2E-95A7-4C1B-8A83-ABC74118F742}
+		{ABCCF243-5DE9-4FEA-BCB8-F989697068E7} = {B12C7B2E-95A7-4C1B-8A83-ABC74118F742}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,3 @@
+namespace GenericWebApp.Models.Requests;
+
+public record UpdateCreate(Guid Id, string Dni, string Nombre, string Apellido, string Telefono, string Email, string Direccion, string Comuna, string Barrio, string FechaNacimiento, string AnioNacimiento, string TipoDocumento, string Genero, string EstadoCivil, string Ocupacion, string IngresosFamiliares, string NumeroFamiliares, string TipoVivienda, string ServiciosBasicos, string DechaRegistro, string UltimaActualizacion, string Estado, string TotalSolicitudes, string MontoTotalRecibido, string UltimaSolicitud, string Observaciones, string Obs);

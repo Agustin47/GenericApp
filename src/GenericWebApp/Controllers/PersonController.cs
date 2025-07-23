@@ -1,6 +1,7 @@
-using Domain;
-using Application.Commands.Person;
+using Application.Commands.Person.Create;
+using Application.Commands.Person.Update;
 using Application.Queries.GetPerson;
+using Domain.State;
 using Framework.CQRS.Commands;
 using Framework.CQRS.Queries;
 using Framework.Security;
@@ -20,10 +21,74 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
     {
         CreatePersonCmd command = new()
         {
-            Identification = person.Identification,
-            Name = person.Name,
-            LastName = person.LastName,
-            Age = person.Age,
+            Dni = person.Dni,
+            Nombre = person.Nombre,
+            Apellido = person.Apellido,
+            Telefono = person.Telefono,
+            Email = person.Email,
+            Direccion = person.Direccion,
+            Comuna = person.Comuna,
+            Barrio = person.Barrio,
+            FechaNacimiento = person.FechaNacimiento,
+            AnioNacimiento = person.AnioNacimiento,
+            TipoDocumento = person.TipoDocumento,
+            Genero = person.Genero,
+            EstadoCivil = person.EstadoCivil,
+            Ocupacion = person.Ocupacion,
+            IngresosFamiliares = person.IngresosFamiliares,
+            NumeroFamiliares = person.NumeroFamiliares,
+            TipoVivienda = person.TipoVivienda,
+            ServiciosBasicos = person.ServiciosBasicos,
+            DechaRegistro = person.DechaRegistro,
+            UltimaActualizacion = person.UltimaActualizacion,
+            Estado = person.Estado,
+            TotalSolicitudes = person.TotalSolicitudes,
+            MontoTotalRecibido = person.MontoTotalRecibido,
+            UltimaSolicitud = person.UltimaSolicitud,
+            Observaciones = person.Observaciones,
+            Obs = person.Obs,
+            UserContext = GetUserContext(),
+        };
+        
+        var createPersonResult = await commandBus.Handle(command);
+        if (createPersonResult.IsFailed)
+            return BadRequest();
+
+        return Ok();
+    }
+    
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UpdateCreate person)
+    {
+        UpdatePersonCmd command = new()
+        {
+            Id = person.Id,
+            Dni = person.Dni,
+            Nombre = person.Nombre,
+            Apellido = person.Apellido,
+            Telefono = person.Telefono,
+            Email = person.Email,
+            Direccion = person.Direccion,
+            Comuna = person.Comuna,
+            Barrio = person.Barrio,
+            FechaNacimiento = person.FechaNacimiento,
+            AnioNacimiento = person.AnioNacimiento,
+            TipoDocumento = person.TipoDocumento,
+            Genero = person.Genero,
+            EstadoCivil = person.EstadoCivil,
+            Ocupacion = person.Ocupacion,
+            IngresosFamiliares = person.IngresosFamiliares,
+            NumeroFamiliares = person.NumeroFamiliares,
+            TipoVivienda = person.TipoVivienda,
+            ServiciosBasicos = person.ServiciosBasicos,
+            DechaRegistro = person.DechaRegistro,
+            UltimaActualizacion = person.UltimaActualizacion,
+            Estado = person.Estado,
+            TotalSolicitudes = person.TotalSolicitudes,
+            MontoTotalRecibido = person.MontoTotalRecibido,
+            UltimaSolicitud = person.UltimaSolicitud,
+            Observaciones = person.Observaciones,
+            Obs = person.Obs,
             UserContext = GetUserContext(),
         };
         
@@ -43,9 +108,9 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
             UserContext = GetUserContext(),
         };
 
-        var persons = await queryBus.Handle<Person>(query);
+        var persons = await queryBus.Handle<PersonState>(query);
         
-        return Ok();
+        return Ok(persons);
     }
 
 }

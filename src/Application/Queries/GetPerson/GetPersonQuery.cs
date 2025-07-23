@@ -1,6 +1,6 @@
-using Domain;
+using Domain.State;
 using Framework.CQRS.Implementation;
 
 namespace Application.Queries.GetPerson;
 
-public class GetPersonQuery : QueryBase<Person>;
+public class GetPersonQuery : QueryBase<PersonState>;

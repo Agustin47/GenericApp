@@ -10,4 +10,12 @@ public class Result : Result<Result>
     public static Result<T> Success<T>(T value) => Result<T>.Success(value);
     public new static Result Failed(params ErrorValidation[] validationErrors) => new(validationErrors);
     public new static Result Failed(string message, string errorCode) => new(message, errorCode);
+
+    public new static Result Failed(Exception? ex)
+    {
+        if (ex == null) return new(string.Empty, string.Empty);
+        var innerError = Failed(ex.InnerException).ValidationErrors.FirstOrDefault();
+        var message = $"{ex.Message}{Environment.NewLine}{innerError?.ErrorMessage}";
+        return new("Exception", message);
+    }
 }

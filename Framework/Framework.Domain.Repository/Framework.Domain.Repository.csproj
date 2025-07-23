@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Framework.Common\Framework.Common.csproj" />
-      <ProjectReference Include="..\..\Framework\Framework.Domain.Repository\Framework.Domain.Repository.csproj" />
+      <ProjectReference Include="..\Framework.Database\Framework.Database.csproj" />
+      <ProjectReference Include="..\Framework.Domain\Framework.Domain.csproj" />
     </ItemGroup>
 
 </Project>

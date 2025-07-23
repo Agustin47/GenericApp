@@ -27,9 +27,11 @@ builder.Services.AddHostedService<AutomaticStarter>();
 
 var provider = AutofacBuilder
     .Start()
+    .AddDomain()
     .AddCqrs()
     .AddMongoDd(mongoOptions)
     .AddSecurity(securityOptions)
+    .AddEventManager()
     .Build();
 
 builder.Host.UseServiceProviderFactory(provider);
