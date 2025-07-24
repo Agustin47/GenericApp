@@ -10,10 +10,21 @@ public class DomainRepositoryEntityFactory(IDomainRepositoryFactory repoDomainFa
         return (TEntity)Activator.CreateInstance(typeof(TEntity), constructorArgs);
     }
 
-    public async Task<TEntity> GetByIdAsync<TEntity>(IEntityId id) where TEntity : DomainEntity
+    public async Task<TEntity> GetByIdAsync<TEntity, TEntityId>(TEntityId id)
+        where TEntity : DomainEntity
+        where TEntityId : IEntityId
     {
         var repo = repoDomainFactory.GetRepository<TEntity>();
-        var entity = await repo.GetByIdAsync(id.Value);
-        return entity?.Value;
+        var entity = await repo.GetByIdAsync(id);
+        if (entity?.Value == null) return null;
+        
+        var dest = Create<TEntity>(id);
+        var type = typeof(TEntity);
+        var properties = type.GetProperties().Where(x => x.CanWrite);
+        foreach (var property in properties)
+            property.SetValue(dest, property.GetValue(entity.Value, null));
+        
+        return dest;
     }
+
 }

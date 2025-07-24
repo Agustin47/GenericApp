@@ -12,7 +12,7 @@ public class UpdatePersonCmdHandler(IDomainEntityFactory domainEntityFactory, IL
     {
         PersonId personId = new(command.Id);
 
-        var person = await domainEntityFactory.GetByIdAsync<Domain.Aggregates.Person>(personId);
+        var person = await domainEntityFactory.GetByIdAsync<Domain.Aggregates.Person, PersonId>(personId);
         await person.Update(command.Dni, command.Nombre, command.Apellido, command.Telefono, command.Email,
             command.Direccion, command.Comuna, command.Barrio, command.FechaNacimiento, command.AnioNacimiento,
             command.TipoDocumento, command.Genero, command.EstadoCivil, command.Ocupacion, command.IngresosFamiliares,
@@ -21,6 +21,7 @@ public class UpdatePersonCmdHandler(IDomainEntityFactory domainEntityFactory, IL
             command.UltimaSolicitud, command.Observaciones, command.Obs,
             command.UserContext.Username);
         
+        await person.SaveChanges();
         return Result.Success();
     }
 }

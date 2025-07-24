@@ -10,9 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Framework.CQRS\Framework.CQRS.csproj" />
       <ProjectReference Include="..\Framework.Database.MongoDB\Framework.Database.MongoDB.csproj" />
-      <ProjectReference Include="..\Framework.Domain.Events\Framework.Domain.Events.csproj" />
       <ProjectReference Include="..\Framework.Domain.Repository\Framework.Domain.Repository.csproj" />
-      <ProjectReference Include="..\Framework.EventManager.MongoDb\Framework.EventManager.MongoDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>

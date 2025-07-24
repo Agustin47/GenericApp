@@ -1,4 +1,5 @@
 using Framework.Common.Result;
+using Framework.Domain;
 using MongoDB.Driver;
 
 namespace Framework.Database.MongoDB;
@@ -11,7 +12,8 @@ public class MongoDomainRepository<T>(IMongoDatabase mongoDatabase) : IDomainRep
     {
         try
         {
-            await _collection.InsertOneAsync(model);
+            var idFlter = Builders<T>.Filter.Eq("_id", (model as dynamic).Id);
+            await _collection.ReplaceOneAsync(idFlter, model, new ReplaceOptions { IsUpsert = true });
             return Result.Success();
         }
         catch (Exception ex)
@@ -20,7 +22,7 @@ public class MongoDomainRepository<T>(IMongoDatabase mongoDatabase) : IDomainRep
         }
     }
 
-    public async Task<Result<T?>> GetByIdAsync(Guid id)
+    public async Task<Result<T?>> GetByIdAsync<TEntityId>(TEntityId id) where TEntityId : IEntityId
     {
         try
         {

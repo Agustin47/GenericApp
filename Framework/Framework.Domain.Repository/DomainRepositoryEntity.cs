@@ -14,7 +14,7 @@ public abstract class DomainRepositoryEntity<T, TEntity, TState>(T id, IDomainRe
         var repo = repoDomainFactory.GetRepository<TEntity>();
         var repoState = repoFactory.GetRepository<TState>();
         await repo.SaveAsync(this as TEntity);
-        await repoState.CreateAsync(ToState());
+        await repoState.UpdateAsync(ToState());
     }
     
     public abstract TState ToState();

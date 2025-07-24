@@ -17,7 +17,7 @@ public class MongoRepository<T>(IMongoDatabase mongoDatabase, string? prefix = n
 
     public async Task<Result> UpdateAsync(T model)
     {
-        await _collection.ReplaceOneAsync(i => i.Id == model.Id,model);
+        await _collection.ReplaceOneAsync(i => i.Id == model.Id, model, new ReplaceOptions { IsUpsert = true });
         return Result.Success();
     }
     

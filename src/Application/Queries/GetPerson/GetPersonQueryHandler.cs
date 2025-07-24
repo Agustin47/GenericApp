@@ -6,7 +6,7 @@ using Domain.State;
 
 namespace Application.Queries.GetPerson;
 
-public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, PersonState>
+public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, List<PersonState>>
 {
     private readonly IRepository<PersonState> _userRepository;
 
@@ -15,7 +15,7 @@ public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, PersonState>
         _userRepository = repositoryFactory.GetRepository<PersonState>();
     }
     
-    public async Task<Result<PersonState?>> Handle(GetPersonQuery query)
+    public async Task<Result<List<PersonState>>> Handle(GetPersonQuery query)
     {
         var spec1 = Specification<PersonState>.Create(u => u.Nombre == "juan");
 
@@ -27,8 +27,7 @@ public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, PersonState>
             .Build();
         
         var users = await _userRepository.Filter(queryRepo);
-        var user = await _userRepository.FirstOrDefault(queryRepo);
         
-        return user;
+        return users;
     }
 }

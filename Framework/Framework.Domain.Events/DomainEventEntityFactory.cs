@@ -10,7 +10,7 @@ public class DomainEventEntityFactory(IEventManager eventManager) : IDomainEntit
         return (TEntity)Activator.CreateInstance(typeof(TEntity), constructorArgs);
     }
 
-    public async Task<TEntity> GetByIdAsync<TEntity>(IEntityId id) where TEntity : DomainEntity
+    public async Task<TEntity> GetByIdAsync<TEntity, TEntityId>(TEntityId id) where TEntity : DomainEntity where TEntityId : IEntityId
     {
         var events = await eventManager.GetByIdAsync(typeof(TEntity).Name, id.Value);
         var entity = Create<TEntity>(id);
