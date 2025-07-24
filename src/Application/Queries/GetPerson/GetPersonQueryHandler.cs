@@ -17,10 +17,10 @@ public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, List<PersonSt
     
     public async Task<Result<List<PersonState>>> Handle(GetPersonQuery query)
     {
-        var spec1 = Specification<PersonState>.Create(u => u.Nombre == "juan");
+        //var spec1 = Specification<PersonState>.Create(u => u.Nombre == "juan");
 
         var queryRepo = QueryRepositoryBuilder<PersonState>.Create()
-            .AddSpecs(spec1)
+            //.AddSpecs(spec1)
             .AddFilters(query.Filters)
             .WithPaging(query.Paging)
             .WithSorting(query.Sorting)

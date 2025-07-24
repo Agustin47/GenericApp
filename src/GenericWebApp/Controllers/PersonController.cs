@@ -108,7 +108,7 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
             UserContext = GetUserContext(),
         };
 
-        var persons = await queryBus.Handle<PersonState>(query);
+        var persons = await queryBus.Handle<List<PersonState>>(query);
         
         return Ok(persons);
     }
