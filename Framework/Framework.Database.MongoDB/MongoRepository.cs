@@ -7,7 +7,15 @@ namespace Framework.Database.MongoDB;
 
 public class MongoRepository<T>(IMongoDatabase mongoDatabase, string? prefix = null) : IRepository<T> where T : IEntity
 {
-    private readonly IMongoCollection<T> _collection = mongoDatabase.GetCollection<T>($"{(prefix != null ? $"{prefix}-" : string.Empty)}{typeof(T).Name}");
+    private readonly IMongoCollection<T> _collection = mongoDatabase.GetCollection<T>(
+        $"{(!string.IsNullOrWhiteSpace(prefix) ? $"{prefix}-" : string.Empty)}{typeof(T).Name}"
+        );
+
+    public T GetById(Guid id)
+    {
+        var idFilter = Builders<T>.Filter.Eq("_id", id);
+        return _collection.Find(idFilter).FirstOrDefault();       
+    }
 
     public async Task<Result> CreateAsync(T model)
     {

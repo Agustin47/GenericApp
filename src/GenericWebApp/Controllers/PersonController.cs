@@ -1,7 +1,7 @@
 using Application.Commands.Person.Create;
 using Application.Commands.Person.Update;
 using Application.Queries.GetPerson;
-using Domain.State;
+using Domain.Aggregates;
 using Framework.CQRS.Commands;
 using Framework.CQRS.Queries;
 using Framework.Security;
@@ -108,7 +108,7 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
             UserContext = GetUserContext(),
         };
 
-        var persons = await queryBus.Handle<List<PersonState>>(query);
+        var persons = await queryBus.Handle<List<Person>>(query);
         
         return Ok(persons);
     }

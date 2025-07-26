@@ -80,7 +80,6 @@ public class AutofacBuilder : IAutofacBuilder, IServiceProviderFactory<IServiceC
     public IAutofacBuilder AddMongoDd(IMongoOptions options)
     {
         _builder.RegisterType<RepositoryFactory>().As<IRepositoryFactory>().SingleInstance();
-        _builder.RegisterType<DomainRepositoryFactory>().As<IDomainRepositoryFactory>().SingleInstance();
         
         var mongoClient = new MongoClient(options.ConnectionString);
         _builder.Register<IMongoDatabase>(x => mongoClient.GetDatabase(options.DatabaseName));

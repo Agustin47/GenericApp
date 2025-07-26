@@ -2,11 +2,11 @@ using Framework.Database;
 
 namespace Framework.Domain.Repository;
 
-public class DomainRepositoryEntityFactory(IDomainRepositoryFactory repoDomainFactory, IRepositoryFactory repoFactory) : IDomainEntityFactory
+public class DomainRepositoryEntityFactory(IRepositoryFactory repoFactory) : IDomainEntityFactory
 {
     public TEntity Create<TEntity>(IEntityId id) where TEntity : DomainEntity
     {
-        object[] constructorArgs = { id, repoDomainFactory, repoFactory };
+        object[] constructorArgs = { id.Value, repoFactory };
         return (TEntity)Activator.CreateInstance(typeof(TEntity), constructorArgs);
     }
 
@@ -14,15 +14,22 @@ public class DomainRepositoryEntityFactory(IDomainRepositoryFactory repoDomainFa
         where TEntity : DomainEntity
         where TEntityId : IEntityId
     {
-        var repo = repoDomainFactory.GetRepository<TEntity>();
-        var entity = await repo.GetByIdAsync(id);
-        if (entity?.Value == null) return null;
+        var factoryType = repoFactory.GetType();
+        var getRepoMethod = factoryType.GetMethod("GetRepository");
+        var genericRepoMethod = getRepoMethod.MakeGenericMethod(typeof(TEntity));
+        var repo = genericRepoMethod.Invoke(repoFactory, [ null ]);
+        
+        var repoType = repo.GetType();
+        var firstOrDefaultMethod = repoType.GetMethod("GetById");
+        var genericGetByIdMethod = (TEntity)firstOrDefaultMethod.Invoke(repo, [ id.Value ]);
+        if (genericGetByIdMethod == null)
+            return null;
         
         var dest = Create<TEntity>(id);
         var type = typeof(TEntity);
         var properties = type.GetProperties().Where(x => x.CanWrite);
         foreach (var property in properties)
-            property.SetValue(dest, property.GetValue(entity.Value, null));
+            property.SetValue(dest, property.GetValue(genericGetByIdMethod, null));
         
         return dest;
     }

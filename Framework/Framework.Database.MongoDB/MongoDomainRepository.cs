@@ -26,8 +26,8 @@ public class MongoDomainRepository<T>(IMongoDatabase mongoDatabase) : IDomainRep
     {
         try
         {
-            var idFlter = Builders<T>.Filter.Eq("_id", id);
-            var value = (await _collection.Find(idFlter).ToListAsync())
+            var idFilter = Builders<T>.Filter.Eq("_id", id);
+            var value = (await _collection.Find(idFilter).ToListAsync())
                 .FirstOrDefault();
             return Result.Success(value);
         }

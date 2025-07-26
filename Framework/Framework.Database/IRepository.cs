@@ -5,6 +5,7 @@ namespace Framework.Database;
 
 public interface IRepository<T> where T : IEntity
 {
+    T GetById(Guid id);
     Task<Result> CreateAsync(T model);
     Task<Result> UpdateAsync(T model);
     Task<Result> DeleteAsync(Guid id);

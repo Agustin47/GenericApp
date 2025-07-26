@@ -4,9 +4,9 @@ using Framework.Domain.Repository;
 
 namespace Domain.Aggregates;
 
-public class Person : DomainRepositoryEntity<PersonId, Person, PersonState>
+public class Person : DomainRepositoryEntity<Person>
 {
-    public Person(PersonId id, IDomainRepositoryFactory repoDomainFactory, IRepositoryFactory repoFactory) : base(id, repoDomainFactory, repoFactory) { }
+    public Person(Guid id, IRepositoryFactory repoFactory) : base(id, repoFactory) { }
 
     public string Dni { get; private set; }
     public string Nombre { get; private set; }
@@ -34,8 +34,6 @@ public class Person : DomainRepositoryEntity<PersonId, Person, PersonState>
     public string UltimaSolicitud { get; private set; }
     public string Observaciones { get; private set; }
     public string Obs { get; private set; }
-    public int Version { get; private set; }
-
     
     
     public async Task Register(string dni, string nombre, string apellido, string telefono, string email, string direccion, string comuna, string barrio, string fechaNacimiento, 
@@ -188,45 +186,10 @@ public class Person : DomainRepositoryEntity<PersonId, Person, PersonState>
     //             break;
     //     }
     // }
-
-
-    public override PersonState ToState() => new()
-    {
-        Id = Id.Value,
-        Dni = Dni,
-        Nombre = Nombre,
-        Apellido = Apellido,
-        Telefono = Telefono,
-        Email = Email,
-        Direccion = Direccion,
-        Comuna = Comuna,
-        Barrio = Barrio,
-        FechaNacimiento = FechaNacimiento,
-        AnioNacimiento = AnioNacimiento,
-        TipoDocumento = TipoDocumento,
-        Genero = Genero,
-        EstadoCivil = EstadoCivil,
-        Ocupacion = Ocupacion,
-        IngresosFamiliares = IngresosFamiliares,
-        NumeroFamiliares = NumeroFamiliares,
-        TipoVivienda = TipoVivienda,
-        ServiciosBasicos = ServiciosBasicos,
-        DechaRegistro = DechaRegistro,
-        UltimaActualizacion = UltimaActualizacion,
-        Estado = Estado,
-        TotalSolicitudes = TotalSolicitudes,
-        MontoTotalRecibido = MontoTotalRecibido,
-        UltimaSolicitud = UltimaSolicitud,
-        Observaciones = Observaciones,
-        Obs = Obs,
-        Version = Version,
-    };
 }
 
-
 /*
-
-    public string Idnumber { get; set; }
+   public string Idnumber { get; set; }
    public string Telefono { get; set; }
    public string Email { get; set; }
    public string Address { get; set; }
