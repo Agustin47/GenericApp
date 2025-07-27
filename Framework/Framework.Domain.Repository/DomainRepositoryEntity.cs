@@ -8,6 +8,8 @@ public abstract class DomainRepositoryEntity<TEntity>(Guid id, IRepositoryFactor
 {
     public Guid Id { get; set; } = id;
     public int Version { get; set; }
+    public DateTime LastUpdate { get; set; }
+    public string UserContext { get; set; }
     
     public override async Task SaveChanges()
     {

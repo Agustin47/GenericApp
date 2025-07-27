@@ -6,21 +6,18 @@ using Framework.Specification;
 
 namespace Application.Queries.GetPerson;
 
-public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, List<Person>>
+public class GetPersonQueryHandler : IQueryHandler<GetPersonQuery, List<Persona>>
 {
-    private readonly IRepository<Person> _userRepository;
+    private readonly IRepository<Persona> _userRepository;
 
     public GetPersonQueryHandler(IRepositoryFactory repositoryFactory)
     {
-        _userRepository = repositoryFactory.GetRepository<Person>();
+        _userRepository = repositoryFactory.GetRepository<Persona>();
     }
     
-    public async Task<Result<List<Person>>> Handle(GetPersonQuery query)
+    public async Task<Result<List<Persona>>> Handle(GetPersonQuery query)
     {
-        //var spec1 = Specification<PersonState>.Create(u => u.Nombre == "juan");
-        
-        var queryRepo = QueryRepositoryBuilder<Person>.Create()
-            //.AddSpecs(spec1)
+        var queryRepo = QueryRepositoryBuilder<Persona>.Create()
             .AddFilters(query.Filters)
             .WithPaging(query.Paging)
             .WithSorting(query.Sorting)

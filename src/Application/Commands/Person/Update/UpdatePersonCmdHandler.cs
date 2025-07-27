@@ -10,9 +10,9 @@ public class UpdatePersonCmdHandler(IDomainEntityFactory domainEntityFactory, IL
 {
     public async Task<Result> Handle(UpdatePersonCmd command)
     {
-        PersonId personId = new(command.Id);
+        EntityId entityId = new(command.Id);
 
-        var person = await domainEntityFactory.GetByIdAsync<Domain.Aggregates.Person, PersonId>(personId);
+        var person = await domainEntityFactory.GetByIdAsync<Domain.Aggregates.Persona, EntityId>(entityId);
         await person.Update(command.Dni, command.Nombre, command.Apellido, command.Telefono, command.Email,
             command.Direccion, command.Comuna, command.Barrio, command.FechaNacimiento, command.AnioNacimiento,
             command.TipoDocumento, command.Genero, command.EstadoCivil, command.Ocupacion, command.IngresosFamiliares,

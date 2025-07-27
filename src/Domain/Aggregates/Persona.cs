@@ -4,9 +4,9 @@ using Framework.Domain.Repository;
 
 namespace Domain.Aggregates;
 
-public class Person : DomainRepositoryEntity<Person>
+public class Persona : DomainRepositoryEntity<Persona>
 {
-    public Person(Guid id, IRepositoryFactory repoFactory) : base(id, repoFactory) { }
+    public Persona(Guid id, IRepositoryFactory repoFactory) : base(id, repoFactory) { }
 
     public string Dni { get; private set; }
     public string Nombre { get; private set; }
@@ -70,6 +70,8 @@ public class Person : DomainRepositoryEntity<Person>
         Obs = obs;
 
         Version++;
+        UserContext = userContext;
+        LastUpdate = actionTime ?? DateTime.UtcNow;
         // await PushEvent(new PersonCreated
         // {
         //     Body = ToState(),
@@ -112,6 +114,8 @@ public class Person : DomainRepositoryEntity<Person>
         Obs = obs;
 
         Version++;
+        UserContext = userContext;
+        LastUpdate = actionTime ?? DateTime.UtcNow;
         // await PushEvent(new PersonUpdated
         // {
         //     Body = ToState(),

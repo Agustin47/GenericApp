@@ -10,7 +10,7 @@ namespace GenericWebApp.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class UserManagementController(ICommandBus commandBus, ISecurityService securityService, ILogger<AuthorizationController> logger)
-    : _Base(securityService)
+    : GenericControllerBase(securityService)
 {
 
     [HttpPost]

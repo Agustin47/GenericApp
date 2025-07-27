@@ -5,6 +5,7 @@ using Domain.Aggregates;
 using Framework.CQRS.Commands;
 using Framework.CQRS.Queries;
 using Framework.Security;
+using GenericWebApp.Models;
 using GenericWebApp.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ namespace GenericWebApp.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecurityService securityService, ILogger<AuthorizationController> logger)
-    : _Base(securityService)
+    : GenericControllerBase(securityService)
 {
 
     [HttpPost]
@@ -101,14 +102,17 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
 
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(QueryBaseModel? query)
     {
-        GetPersonQuery query = new()
+        GetPersonQuery get = new()
         {
             UserContext = GetUserContext(),
+            Filters = query?.Filters,
+            Sorting = query?.Sorting,
+            Paging = query?.Paging,
         };
 
-        var persons = await queryBus.Handle<List<Person>>(query);
+        var persons = await queryBus.Handle<List<Persona>>(get);
         
         return Ok(persons);
     }

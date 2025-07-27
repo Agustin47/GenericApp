@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Commands.Person.Create;
 
-public class CreatePersonCmdHandler(IDomainEntityFactory domainEntityFactory, ILogger<CreatePersonCmdHandler> logger) : ICommandHandler<CreatePersonCmd>
+public class CreatePersonCmdHandler(IDomainEntityFactory domainEntityFactory) : ICommandHandler<CreatePersonCmd>
 {
     public async Task<Result> Handle(CreatePersonCmd command)
     {
         Guid id = Guid.NewGuid();
-        PersonId personId = new(id);
-        var person = domainEntityFactory.Create<Domain.Aggregates.Person>(personId);
+        EntityId entityId = new(id);
+        var person = domainEntityFactory.Create<Domain.Aggregates.Persona>(entityId);
 
         await person.Register(command.Dni, command.Nombre, command.Apellido, command.Telefono, command.Email,
             command.Direccion, command.Comuna, command.Barrio, command.FechaNacimiento, command.AnioNacimiento,

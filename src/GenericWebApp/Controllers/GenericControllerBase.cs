@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GenericWebApp.Controllers;
 
-public abstract class _Base(ISecurityService securityService) : ControllerBase
+public abstract class GenericControllerBase(ISecurityService securityService) : ControllerBase
 {
     protected UserContext GetUserContext()
     {
