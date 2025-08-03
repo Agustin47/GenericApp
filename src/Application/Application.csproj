@@ -11,4 +11,8 @@
       <ProjectReference Include="..\..\Framework\Framework.CQRS\Framework.CQRS.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Commands\UserManagement\" />
+    </ItemGroup>
+
 </Project>

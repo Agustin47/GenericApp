@@ -1,7 +1,7 @@
 using FluentValidation;
 using Framework.CQRS.Implementation;
 
-namespace Application.Commands.UserCreation;
+namespace Application.Commands.UserManagement.UserCreation;
 
 public class CreateUserCmdValidation : CommandBaseValidator<CreateUserCmd>
 {

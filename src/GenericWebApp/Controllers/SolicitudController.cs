@@ -1,3 +1,5 @@
+using Application.Commands.Solicitud.ApproveSolicitud;
+using Application.Commands.Solicitud.CancelSolicitud;
 using Application.Commands.Solicitud.CreateSolicitud;
 using Application.Queries.GetSolicitud;
 using Domain.Aggregates;
@@ -39,7 +41,39 @@ public class SolicitudController(ICommandBus commandBus, IQueryBus queryBus, ISe
         
         var createSolicitudResult = await commandBus.Handle(cmd);
         if (createSolicitudResult.IsFailed)
-            return BadRequest();
+            return BadRequest(createSolicitudResult);
+        
+        return Ok();
+    }
+
+    [HttpPost("approve/{id}")]
+    public async Task<IActionResult> Approve([FromRoute] Guid id)
+    {
+        ApproveSolicitudCmd cmd = new()
+        {
+            EntityId = id,
+            UserContext = GetUserContext(),
+        };
+        
+        var approveSolicitud = await commandBus.Handle(cmd);
+        if (approveSolicitud.IsFailed)
+            return BadRequest(approveSolicitud);
+        
+        return Ok();
+    }
+    
+    [HttpPost("cancel/{id}")]
+    public async Task<IActionResult> Cancel([FromRoute] Guid id)
+    {
+        CancelSolicitudCmd cmd = new()
+        {
+            EntityId = id,
+            UserContext = GetUserContext(),
+        };
+        
+        var cancelSolicitud = await commandBus.Handle(cmd);
+        if (cancelSolicitud.IsFailed)
+            return BadRequest(cancelSolicitud);
         
         return Ok();
     }

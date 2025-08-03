@@ -53,7 +53,7 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
         
         var createPersonResult = await commandBus.Handle(command);
         if (createPersonResult.IsFailed)
-            return BadRequest();
+            return BadRequest(createPersonResult);
 
         return Ok();
     }
@@ -95,7 +95,7 @@ public class PersonController(ICommandBus commandBus, IQueryBus queryBus, ISecur
         
         var createPersonResult = await commandBus.Handle(command);
         if (createPersonResult.IsFailed)
-            return BadRequest();
+            return BadRequest(createPersonResult);
 
         return Ok();
     }

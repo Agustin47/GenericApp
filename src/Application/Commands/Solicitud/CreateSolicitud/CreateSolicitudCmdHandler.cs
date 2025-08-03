@@ -30,22 +30,32 @@ public class CreateSolicitudCmdHandler(IDomainEntityFactory domainEntityFactory,
             .Build();
         
         var presupuestoResult = await presupuestoRepo.FirstOrDefault(query);
-        var presupuesto = presupuestoResult.Value;
-        if(presupuesto == null)
+        
+        if(presupuestoResult.Value == null)
             return Result.Failed(ExpectedErrors.Generic("No existe presupuesto para la comuna"));
         
+        EntityId presupuestoId = new(presupuestoResult.Value.Id);
+        var presupuesto = await domainEntityFactory.GetByIdAsync<Domain.Aggregates.Presupuesto, EntityId>(presupuestoId);
         
         var disponible = presupuesto.Gastado + command.Monto < presupuesto.Planificado;
         if(!disponible)
-            return Result.Failed(ExpectedErrors.Generic("No hay presupuesto disponible"));
+            return Result.Failed(ExpectedErrors.Generic($"No hay presupuesto disponible, gastado {presupuesto.Gastado} + {command.Monto} = {presupuesto.Gastado + command.Monto} > {presupuesto.Planificado}"));
         
         EntityId entityId = new(Guid.NewGuid());
         var solicitud = domainEntityFactory.Create<Domain.Aggregates.Solicitud>(entityId);
-        solicitud.New(command.SolicitanteId, command.TipoAyuda, command.Detalles, comuna.Id, comuna.Nombre,
+        solicitud.New(command.SolicitanteId, presupuesto.Id, command.TipoAyuda, command.Detalles, comuna.Id, comuna.Nombre,
             command.Monto, command.Urgencia, command.Justificacion, command.Observaciones,
             command.UserContext.Username);
         
-        presupuesto.AddGastado(command.Monto, command.UserContext.Username);
+        presupuesto.AddGastado(new()
+            {
+                Id = solicitud.Id,
+                SolicitanteId = command.SolicitanteId,
+                SolicitanteNombre = persona.Nombre,
+                SolicitanteDNI = persona.Dni,
+                Monto = command.Monto,
+                
+            }, command.UserContext.Username);
 
         await presupuesto.SaveChanges();
         await solicitud.SaveChanges();

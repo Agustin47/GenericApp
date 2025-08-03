@@ -1,5 +1,6 @@
-using Application.Commands.UserChangePassword;
-using Application.Commands.UserCreation;
+using Application.Commands.UserManagement.UserChangePassword;
+using Application.Commands.UserManagement.UserCreation;
+using Application.Roles;
 using Framework.CQRS.Commands;
 using Framework.Security;
 using GenericWebApp.Models.Requests;
@@ -28,7 +29,7 @@ public class UserManagementController(ICommandBus commandBus, ISecurityService s
         };
         var createUserResult = await commandBus.Handle(command);
         if (createUserResult.IsFailed)
-            return BadRequest();
+            return BadRequest(createUserResult);
         
         return Ok();
     }
@@ -44,8 +45,14 @@ public class UserManagementController(ICommandBus commandBus, ISecurityService s
         };
         var createUserResult = commandBus.Handle(command);
         if (createUserResult.IsFaulted)
-            return BadRequest();
+            return BadRequest(createUserResult);
         
         return Ok();
+    }
+    
+    [HttpGet("roles")]
+    public IActionResult GetRoles()
+    {
+        return Ok(Rol.GetAll());
     }
 }

@@ -36,6 +36,17 @@ var provider = AutofacBuilder
 
 builder.Host.UseServiceProviderFactory(provider);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowAll",
+        policy  =>
+        {
+            policy.WithOrigins("*", "*");
+        });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,6 +61,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
         c.RoutePrefix = string.Empty;
     });
 }
+
+app.UseCors("AllowAll");
 
 app.UseMiddleware<AuthenticationMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

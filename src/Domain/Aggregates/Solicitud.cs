@@ -1,3 +1,5 @@
+using Domain.ValueObject;
+using Framework.Common.Result;
 using Framework.Database;
 using Framework.Domain.Repository;
 
@@ -21,13 +23,15 @@ public class Solicitud(Guid id, IRepositoryFactory repoFactory) : DomainReposito
     public string Observaciones { get; private set; }
     public string Documentos { get; private set; }
     public DateTime FechaEntrega { get; private set; }
+    public Guid PresupuestoId { get; set; }
 
     public void New(
-        Guid solicitanteId, string tipoAyuda, string detalles, Guid comunaId, string comuna, decimal monto,
+        Guid solicitanteId, Guid presupuestoId, string tipoAyuda, string detalles, Guid comunaId, string comuna, decimal monto,
         string urgencia, string justificacion, string observaciones,
         string userContext, DateTime? actionTime = null)
     {
         SolicitanteId = solicitanteId;
+        PresupuestoId = presupuestoId;
         TipoAyuda = tipoAyuda;
         Detalles = detalles;
         ComunaId = comunaId;
@@ -37,11 +41,44 @@ public class Solicitud(Guid id, IRepositoryFactory repoFactory) : DomainReposito
         Urgencia = urgencia;
         Justificacion = justificacion;
         Observaciones = observaciones;
+        Estado = SolicitudStatus.Pendiente.Name;
         
         Fecha = FechaActualizacion = DateTime.UtcNow;
         
         Version++;
         UserContext = userContext;
         LastUpdate = actionTime ?? DateTime.UtcNow;
+    }
+
+    public Result Approve(string userContext, DateTime? actionTime = null)
+    {
+        if(Estado != SolicitudStatus.Pendiente.Name)
+            return Result.Failed("No se puede cancelar la solicitud, estado invalido", "DOM-0001");
+        
+        Estado = SolicitudStatus.Aprobada.Name;
+        
+        FechaActualizacion = DateTime.UtcNow;
+        
+        Version++;
+        UserContext = userContext;
+        LastUpdate = actionTime ?? DateTime.UtcNow;
+        
+        return Result.Success();
+    }
+    
+    public Result Cancel(string userContext, DateTime? actionTime = null)
+    {
+        if(Estado != SolicitudStatus.Pendiente.Name)
+            return Result.Failed("No se puede cancelar la solicitud, estado invalido", "DOM-0001");
+        
+        Estado = SolicitudStatus.Rechazada.Name;
+        
+        FechaActualizacion = DateTime.UtcNow;
+        
+        Version++;
+        UserContext = userContext;
+        LastUpdate = actionTime ?? DateTime.UtcNow;
+        
+        return Result.Success();
     }
 }

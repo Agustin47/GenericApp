@@ -4,7 +4,7 @@ using Framework.CQRS.Commands;
 using Framework.Security;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Commands.UserCreation;
+namespace Application.Commands.UserManagement.UserCreation;
 
 public class CreateUserCmdHandler(ISecurityService securityService, ILogger<CreateUserCmdHandler> logger) : ICommandHandler<CreateUserCmd>
 {

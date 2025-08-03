@@ -1,6 +1,6 @@
 using Framework.CQRS.Implementation;
 
-namespace Application.Commands.UserChangePassword;
+namespace Application.Commands.UserManagement.UserChangePassword;
 
 public class ChangePasswordCmd : CommandBase
 {

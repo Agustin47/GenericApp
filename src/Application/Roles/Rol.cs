@@ -13,4 +13,7 @@ public class Rol : RolBase
     
     public static Rol? GetByName(string name) =>
         ValueObjectExtensions.GetAllOptionsAsList<Rol>().FirstOrDefault(x => x.Name == name);
+    
+    public static Rol[] GetAll() =>
+        ValueObjectExtensions.GetAllOptionsAsList<Rol>().ToArray();
 }

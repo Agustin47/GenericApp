@@ -1,4 +1,5 @@
 using Application.Commands.Presupuesto.Create;
+using Application.Commands.Presupuesto.Edit;
 using Application.Queries.GetPresupuesto;
 using Domain.Aggregates;
 using Framework.CQRS.Commands;
@@ -26,12 +27,30 @@ public class PresupuestoController(ICommandBus commandBus, IQueryBus queryBus, I
             ComunaId = presupuesto.ComunaId,
             Planificado = presupuesto.Planificado,
             Mes = presupuesto.Mes,
+            Año = presupuesto.Año,
             UserContext = GetUserContext(),
         };
         
         var createPresupuestoResult = await commandBus.Handle(cmd);
         if (createPresupuestoResult.IsFailed)
-            return BadRequest();
+            return BadRequest(createPresupuestoResult);
+
+        return Ok();
+    }
+    
+    [HttpPut]
+    public async Task<IActionResult> Edit([FromBody] EditPresupuesto presupuesto)
+    {
+        EditPresupuestoCmd cmd = new()
+        {
+            EntityId = presupuesto.EntityId,
+            Planificado = presupuesto.Planificado,
+            UserContext = GetUserContext(),
+        };
+        
+        var editPresupuestoResult = await commandBus.Handle(cmd);
+        if (editPresupuestoResult.IsFailed)
+            return BadRequest(editPresupuestoResult);
 
         return Ok();
     }

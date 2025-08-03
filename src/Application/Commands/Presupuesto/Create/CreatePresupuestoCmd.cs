@@ -8,4 +8,5 @@ public class CreatePresupuestoCmd : CommandBase
     public Guid ComunaId { get; set; }
     public decimal Planificado { get; set; }
     public int Mes { get; set; }
+    public int Año { get; set; }
 }

@@ -14,16 +14,17 @@ public class CreatePresupuestoCmdHandler(IDomainEntityFactory domainEntityFactor
     {
         var presupuestoRepo = repositoryFactory.GetRepository<Domain.Aggregates.Presupuesto>();
         var queryRepo = QueryRepositoryBuilder<Domain.Aggregates.Presupuesto>.Create()
-            .AddSpecs(Specification<Domain.Aggregates.Presupuesto>.Create(x => x.Mes == command.Mes))
+            .AddSpecs(Specification<Domain.Aggregates.Presupuesto>.Create(x => x.Mes == command.Mes && x.Año == command.Año))
             .Build();
         
         var exist = await presupuestoRepo.FirstOrDefault(queryRepo);
         if(exist.Value != null)
-            return Result.Failed(ExpectedErrors.Generic($"Presupuesto ya existe para el mes {command.Mes}"));
+            return Result.Failed(ExpectedErrors.Generic($"Presupuesto ya existe para el período {exist.Value.FechaAplica:MM/yyyy}"));
         
         EntityId entityId = new(Guid.NewGuid());
         var presupuesto = domainEntityFactory.Create<Domain.Aggregates.Presupuesto>(entityId);
-        presupuesto.New(command.Comuna, command.ComunaId, command.Planificado, command.Mes, command.UserContext.Username);;
+        presupuesto.New(command.Comuna, command.ComunaId, command.Planificado, command.Mes, command.Año, 
+            command.UserContext.Username);;
         
         await presupuesto.SaveChanges();
         return Result.Success();

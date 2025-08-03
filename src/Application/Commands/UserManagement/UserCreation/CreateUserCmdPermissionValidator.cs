@@ -1,6 +1,6 @@
 using Framework.CQRS.Implementation;
 
-namespace Application.Commands.UserCreation;
+namespace Application.Commands.UserManagement.UserCreation;
 
 public class CreateUserCmdPermissionValidator : CommandBasePermissionValidator<CreateUserCmd>
 {

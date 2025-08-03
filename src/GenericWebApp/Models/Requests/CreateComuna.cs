@@ -1,8 +1,6 @@
-using Framework.CQRS.Implementation;
+namespace GenericWebApp.Models.Requests;
 
-namespace Application.Commands.Comuna.Create;
-
-public class CreateComunaCmd : CommandBase
+public class CreateComuna
 {
     public string Nombre { get; set; }
     public string Codigo { get; set; }

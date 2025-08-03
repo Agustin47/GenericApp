@@ -3,7 +3,7 @@ using Framework.CQRS.Commands;
 using Framework.Security;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Commands.UserChangePassword;
+namespace Application.Commands.UserManagement.UserChangePassword;
 
 public class ChangePasswordCmdHandler(ISecurityService securityService, ILogger<ChangePasswordCmdHandler> logger) : ICommandHandler<ChangePasswordCmd>
 {
