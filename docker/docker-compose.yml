@@ -1,0 +1,88 @@
+# =============================================================================
+# Docker Compose for Local Development
+# Includes MongoDB for local testing
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # Senado API
+  # ==========================================================================
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: senado-api
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - MongoDB__ConnectionString=mongodb://mongo:27017
+      - MongoDB__DatabaseName=senado
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - senado-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # MongoDB (Local Development Only)
+  # In production, use MongoDB Atlas M0 (Free)
+  # ==========================================================================
+  mongo:
+    image: mongo:7.0
+    container_name: senado-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      - MONGO_INITDB_DATABASE=senado
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - senado-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # Mongo Express (Database Admin UI - Development Only)
+  # ==========================================================================
+  mongo-express:
+    image: mongo-express:latest
+    container_name: senado-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - senado-network
+    restart: unless-stopped
+    profiles:
+      - debug
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  senado-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  mongo-data:
+    driver: local

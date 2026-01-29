@@ -1,0 +1,30 @@
+# =============================================================================
+# Terraform Variables - Copy this file to terraform.tfvars and fill in values
+# =============================================================================
+
+# AWS Region - sa-east-1 (São Paulo) is closest to Argentina
+aws_region = "sa-east-1"
+
+# Environment
+environment = "production"
+
+# Instance configuration
+instance_name = "senado-app"
+blueprint_id  = "ubuntu_22_04"
+bundle_id     = "micro_2_0" # $5/month - 1 vCPU, 1GB RAM, 40GB SSD
+
+# Available bundle options:
+# - nano_2_0    : $3.50/month - 512MB RAM, 1 vCPU, 20GB SSD (too small for .NET)
+# - micro_2_0   : $5/month    - 1GB RAM, 1 vCPU, 40GB SSD (recommended)
+# - small_2_0   : $10/month   - 2GB RAM, 1 vCPU, 60GB SSD
+# - medium_2_0  : $20/month   - 4GB RAM, 2 vCPU, 80GB SSD
+
+# MongoDB Atlas Connection String
+# Get this from MongoDB Atlas Dashboard after creating your M0 cluster
+# mongodb_connection_string = "mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/senado?retryWrites=true&w=majority"
+
+# Custom domain (optional - leave empty if not using)
+domain_name = ""
+
+# Application port
+app_port = 5000

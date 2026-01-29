@@ -1,0 +1,16 @@
+# =============================================================================
+# Terraform Variables for AWS EC2 Free Tier
+# Copy this file to terraform.tfvars and customize
+# =============================================================================
+
+aws_region    = "sa-east-1"
+environment   = "production"
+instance_type = "t3.micro" # Free Tier eligible
+key_pair_name = "senado-key"
+
+# Restrict SSH access to your IP (recommended)
+# Get your IP: curl ifconfig.me
+allowed_ssh_cidr = "0.0.0.0/0" # Change to "YOUR.IP.ADDRESS/32"
+
+# MongoDB Atlas connection string
+# mongodb_connection_string = "mongodb+srv://user:pass@cluster.mongodb.net/senado"
